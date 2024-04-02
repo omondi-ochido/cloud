@@ -3,37 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matrix Solver</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Java Notepad</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e1e; /* Dark background color */
+            color: #ffffff; /* White text color */
+        }
+        .container {
+            width: 80%;
+            max-width: 800px; /* Limiting maximum width */
+            margin: 20px auto; /* Centering the container */
+        }
+        .code-input {
+            width: 100%;
+            min-height: 200px; /* Minimum height of the textarea */
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: both; /* Allow resizing both horizontally and vertically */
+            background-color: #333333; /* Dark background color for textarea */
+            color: #ffffff; /* White text color */
+            overflow-y: auto; /* Enable vertical scrolling if needed */
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Matrix Solver</h1>
+<div class="container">
+    <h1>Java Notepad</h1>
+    <p>No autocompletion Noise</p>
+    <div id="codeInput" class="code-input" contenteditable="true" placeholder="Write your code here..."></div>
+    <input type="text" id="filenameInput" placeholder="Filename...Main.java">
+    <button onclick="highlightKeywords()">Highlight Keywords</button>
+    <button onclick="downloadCode()">Download Code</button>
+</div>
 
-        <div id="inputSection">
-            <label for="rows">Enter the number of rows:</label>
-            <input type="number" id="rows" min="1" required>
+<!-- JavaScript for running code and highlighting keywords -->
+<script>
+    // Keywords and their associated colors
+    var keywordColors = {
+        "int": "orange",
+        "float": "blue",
+        "double": "green",
+        "if": "red",
+        "else": "purple",
+        "for": "yellow",
+        "while": "cyan",
+        "class": "magenta",
+        "public": "orange",
+        "private": "blue",
+        "static": "green",
+        "void": "red",
+        "return": "purple"
+    };
 
-            <label for="columns">Enter the number of columns:</label>
-            <input type="number" id="columns" min="1" required>
+    function highlightKeywords() {
+        var codeInput = document.getElementById('codeInput');
+        var code = codeInput.innerHTML;
 
-            <button onclick="generateMatrixInputs()">Generate Matrix</button>
+        // Loop through each keyword and apply highlighting with associated color
+        for (var keyword in keywordColors) {
+            if (keywordColors.hasOwnProperty(keyword)) {
+                var color = keywordColors[keyword];
+                var regex = new RegExp("\\b" + keyword + "\\b", "g");
+                code = code.replace(regex, '<span style="color: ' + color + ';">' + keyword + '</span>');
+            }
+        }
 
-            <div id="matrixInputs"></div>
+        // Update the content of the div with highlighting
+        codeInput.innerHTML = code;
+    }
 
-            <button onclick="getMatrixInput()">Submit</button>
-        </div>
+    function downloadCode() {
+        var code = document.getElementById('codeInput').innerText;
+        var filename = document.getElementById('filenameInput').value.trim();
 
-        <div id="outputSection" style="display: none;">
-            <div id="matrixInput"></div>
-            <div id="determinantResult"></div>
-            <div id="inverseResult"></div>
-        </div>
+        // Use a default filename if no filename is provided
+        if (filename === "") {
+            filename = "code.java";
+        }
 
-        <div id="errorMsg" class="errorMsg"></div>
-        <div id="successMsg" class="successMsg"></div>
-    </div>
+        // Create a blob with the code content
+        var blob = new Blob([code], { type: "text/plain;charset=utf-8" });
 
-    <script src="script.js"></script>
+        // Create a link element to trigger the download
+        var link = document.createElement('a');
+        link.download = filename;
+        link.href = window.URL.createObjectURL(blob);
+        link.click();
+    }
+</script>
 </body>
 </html>
